@@ -1,117 +1,64 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { getAllWeatherData } from './api/weatherApi';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App = () => {
+  const [weatherData, setWeatherData] = useState({});
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getAllWeatherData();
+      setWeatherData(data);
+    };
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+    fetchData();
+  }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    
+    <ScrollView style={styles.container}>
+    <View style={styles.titleContainer}>
+      <Text style={styles.titleText}>Hava Durumu ☀️☁️🌧️</Text></View>
+      {Object.entries(weatherData).map(([city, data]: [string, any]) => (
+        
+        <View key={city} style={styles.cityContainer}>
+            
+          <Text style={styles.cityName}>{city}</Text>
+          <Text>Temperature: {data.main.temp}°C</Text>
+          <Text>Weather: {data.weather[0].main}</Text>
+          
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      ))}
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    padding: 20,
   },
-  sectionTitle: {
+  titleContainer:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    
+  },
+  titleText:{
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: 'bold',
+    color: '#DA8359'
   },
-  sectionDescription: {
-    marginTop: 8,
+  cityContainer: {
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#96CEB4',
+    borderRadius: 5,
+  },
+  cityName: {
     fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
 });
 
